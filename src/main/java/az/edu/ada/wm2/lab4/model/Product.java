@@ -11,15 +11,43 @@ public class Product {
  private BigDecimal price;
  private LocalDate expirationDate;
 
+ // No-args constructor
  public Product() {
   this.id = UUID.randomUUID();
  }
 
+ // Constructor without id (for create operations)
  public Product(String productName, BigDecimal price, LocalDate expirationDate) {
   this.id = UUID.randomUUID();
   this.productName = productName;
   this.price = price;
   this.expirationDate = expirationDate;
+ }
+
+ // Constructor with all fields (for update operations)
+ public Product(UUID id, String productName, BigDecimal price, LocalDate expirationDate) {
+  this.id = id != null ? id : UUID.randomUUID();
+  this.productName = productName;
+  this.price = price;
+  this.expirationDate = expirationDate;
+ }
+
+ // Getters and Setters
+
+ public UUID getId() {
+  return id;
+ }
+
+ public void setId(UUID id) {
+  this.id = id != null ? id : UUID.randomUUID();
+ }
+
+ public String getProductName() {
+  return productName;
+ }
+
+ public void setProductName(String productName) {
+  this.productName = productName;
  }
 
  public BigDecimal getPrice() {
@@ -37,21 +65,4 @@ public class Product {
  public void setExpirationDate(LocalDate expirationDate) {
   this.expirationDate = expirationDate;
  }
-
- public String getProductName() {
-  return productName;
- }
-
- public void setProductName(String productName) {
-  this.productName = productName;
- }
-
- public UUID getId() {
-  return id;
- }
-
- public void setId(UUID id) {
-  this.id = id;
- }
- }
-
+}

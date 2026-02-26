@@ -15,27 +15,27 @@ import java.util.UUID;
 @RequestMapping("/api/products")
 public class ProductController {
 
-    private final ProductService service;
+    private final ProductService productService;
 
-    public ProductController(ProductService service) {
-        this.service = service;
+    public ProductController(ProductService productService) {
+        this.productService = productService;
     }
 
     @PostMapping
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
-        Product created = service.createProduct(product);
+        Product created = productService.createProduct(product);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
     @GetMapping
     public ResponseEntity<List<Product>> getAllProducts() {
-        return ResponseEntity.ok(service.getAllProducts());
+        return ResponseEntity.ok(productService.getAllProducts());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable UUID id) {
         try {
-            return ResponseEntity.ok(service.getProductById(id));
+            return ResponseEntity.ok(productService.getProductById(id));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
@@ -45,7 +45,7 @@ public class ProductController {
     public ResponseEntity<Product> updateProduct(@PathVariable UUID id,
                                                  @RequestBody Product product) {
         try {
-            return ResponseEntity.ok(service.updateProduct(id, product));
+            return ResponseEntity.ok(productService.updateProduct(id, product));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
@@ -54,7 +54,7 @@ public class ProductController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable UUID id) {
         try {
-            service.deleteProduct(id);
+            productService.deleteProduct(id);
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -64,13 +64,19 @@ public class ProductController {
     @GetMapping("/filter/expiring")
     public ResponseEntity<List<Product>> getProductsExpiringBefore(
             @RequestParam LocalDate date) {
-        return ResponseEntity.ok(service.getProductsExpiringBefore(date));
+
+        return ResponseEntity.ok(
+                productService.getProductsExpiringBefore(date)
+        );
     }
 
     @GetMapping("/filter/price")
     public ResponseEntity<List<Product>> getProductsByPriceRange(
             @RequestParam BigDecimal min,
             @RequestParam BigDecimal max) {
-        return ResponseEntity.ok(service.getProductsByPriceRange(min, max));
+
+        return ResponseEntity.ok(
+                productService.getProductsByPriceRange(min, max)
+        );
     }
 }

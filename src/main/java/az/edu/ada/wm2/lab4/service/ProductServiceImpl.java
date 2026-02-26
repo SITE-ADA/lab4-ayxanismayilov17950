@@ -4,7 +4,6 @@ import az.edu.ada.wm2.lab4.model.Product;
 import az.edu.ada.wm2.lab4.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -13,10 +12,10 @@ import java.util.stream.Collectors;
 @Service
 public class ProductServiceImpl implements ProductService {
 
-    private final ProductRepository repository;
+    private final ProductRepository productRepository;
 
-    public ProductServiceImpl(ProductRepository repository) {
-        this.repository = repository;
+    public ProductServiceImpl(ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
 
     @Override
@@ -24,49 +23,52 @@ public class ProductServiceImpl implements ProductService {
         if (product.getId() == null) {
             product.setId(UUID.randomUUID());
         }
-        return repository.save(product);
+        return productRepository.save(product);
     }
 
     @Override
     public Product getProductById(UUID id) {
-        return repository.findById(id)
+        return productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
     }
 
     @Override
     public List<Product> getAllProducts() {
-        return repository.findAll();
+        return productRepository.findAll();
     }
 
     @Override
     public Product updateProduct(UUID id, Product product) {
-        if (!repository.existsById(id)) {
+        if (!productRepository.existsById(id)) {
             throw new RuntimeException("Product not found with id: " + id);
         }
+
         product.setId(id);
-        return repository.save(product);
+        return productRepository.save(product);
     }
 
     @Override
     public void deleteProduct(UUID id) {
-        if (!repository.existsById(id)) {
+        if (!productRepository.existsById(id)) {
             throw new RuntimeException("Product not found with id: " + id);
         }
-        repository.deleteById(id);
+
+        productRepository.deleteById(id);
     }
 
     @Override
     public List<Product> getProductsExpiringBefore(LocalDate date) {
-        return repository.findAll().stream()
-                .filter(p -> p.getExpirationDate().isBefore(date))
+        return productRepository.findAll().stream()
+                .filter(product -> product.getExpirationDate().isBefore(date))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<Product> getProductsByPriceRange(BigDecimal min, BigDecimal max) {
-        return repository.findAll().stream()
-                .filter(p -> p.getPrice().compareTo(min) >= 0 &&
-                        p.getPrice().compareTo(max) <= 0)
+    public List<Product> getProductsByPriceRange(java.math.BigDecimal min, java.math.BigDecimal max) {
+        return productRepository.findAll().stream()
+                .filter(product ->
+                        product.getPrice().compareTo(min) >= 0 &&
+                                product.getPrice().compareTo(max) <= 0)
                 .collect(Collectors.toList());
     }
 }
